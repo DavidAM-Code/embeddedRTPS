@@ -78,6 +78,9 @@ public:
       change.data.append(data, size);
     }
     change.pBufManager = pBufManager;
+    change.disposeAfterWrite = disposeAfterWrite;
+    change.data.reserve(size);
+    change.data.append(data, size);
     change.sequenceNumber = ++m_lastUsedSequenceNumber;
 
     CacheChange *place = &m_buffer[m_head];
@@ -105,7 +108,7 @@ public:
       return;
     }
 
-    while (m_buffer[m_tail].sequenceNumber <= sn) {
+    while (m_buffer[m_tail].sequenceNumber <= sn && (m_head != m_tail)) {
       incrementTail();
     }
   }

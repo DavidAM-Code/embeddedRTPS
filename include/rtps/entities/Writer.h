@@ -80,6 +80,8 @@ public:
   void setSEDPSequenceNumber(const SequenceNumber_t &sn);
   const SequenceNumber_t &getSEDPSequenceNumber();
 
+  bool isBuiltinEndpoint();
+
 protected:
   SequenceNumber_t m_sedp_sequence_number;
 
