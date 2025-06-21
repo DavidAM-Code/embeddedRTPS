@@ -29,6 +29,7 @@ Author: i11 - Embedded Software, RWTH Aachen University
 #include "rtps/discovery/TopicData.h"
 #include "rtps/entities/ReaderProxy.h"
 #include "rtps/storages/CacheChange.h"
+#include "rtps/storages/PBufManager.h"
 #include "rtps/storages/MemoryPool.h"
 #include "rtps/storages/PBufWrapper.h"
 
@@ -93,6 +94,8 @@ protected:
   SequenceNumber_t m_nextSequenceNumberToSend;
 
   friend class SEDPAgent;
+  virtual const CacheChange *newChange(ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
+                                       bool markDisposedAfterWrite) = 0;
   virtual const CacheChange *newChange(ChangeKind_t kind, const uint8_t *data,
                                        DataSize_t size, bool inLineQoS,
                                        bool markDisposedAfterWrite) = 0;

@@ -98,7 +98,7 @@ void StatelessWriterT<NetworkDriver>::reset() {
 
 template <typename NetworkDriver>
 const CacheChange *StatelessWriterT<NetworkDriver>::newChange(
-    rtps::ChangeKind_t kind, const uint8_t *data, DataSize_t size,
+    rtps::ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size,
     bool inLineQoS, bool markDisposedAfterWrite) {
   INIT_GUARD();
   if (isIrrelevant(kind)) {
@@ -117,13 +117,29 @@ const CacheChange *StatelessWriterT<NetworkDriver>::newChange(
     }
   }
 
-  auto *result = m_history.addChange(data, size);
+  auto *result = m_history.addChange(pBufManager, data, size);
   if (mp_threadPool != nullptr) {
     mp_threadPool->addWorkload(this);
   }
 
   SLW_LOG("Adding new data.\n");
   return result;
+}
+
+template <class NetworkDriver>
+const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
+    bool markDisposedAfterWrite) {
+      newChange(kind, pBufManager, nullptr, 0, inLineQoS,
+                markDisposedAfterWrite);
+}
+
+template <class NetworkDriver>
+const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+    ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
+    bool markDisposedAfterWrite) {
+      newChange(kind, nullptr, data, size, inLineQoS,
+                markDisposedAfterWrite);
 }
 
 template <typename NetworkDriver>
@@ -199,10 +215,12 @@ void StatelessWriterT<NetworkDriver>::progress() {
         } else {
           reid = proxy.remoteReaderGuid.entityId;
         }
-        MessageFactory::addSubMessageData(info.buffer, next->data, false,
+
+        PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+        MessageFactory::addSubMessageData(info.buffer, pbufChain, false,
                                           next->sequenceNumber,
                                           m_attributes.endpointGuid.entityId,
-                                          reid); // TODO
+                                          reid);
       }
 
       // Just usable for IPv4

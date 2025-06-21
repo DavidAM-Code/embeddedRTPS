@@ -119,8 +119,15 @@ template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::reset() {
 }
 
 template <class NetworkDriver>
+const CacheChange *newChange(
+    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
+                                       bool markDisposedAfterWrite) {
+                                       
+}
+
+template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
-    ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
+    ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
   INIT_GUARD()
   if (isIrrelevant(kind)) {
@@ -143,7 +150,7 @@ const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
   }
 
   auto *result =
-      m_history.addChange(data, size, inLineQoS, markDisposedAfterWrite);
+      m_history.addChange(pBufManager, data, size, inLineQoS, markDisposedAfterWrite);
   if (mp_threadPool != nullptr) {
     mp_threadPool->addWorkload(this);
   }
@@ -151,6 +158,22 @@ const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
   SFW_LOG("Adding new data.\n");
 
   return result;
+}
+
+template <class NetworkDriver>
+const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
+    bool markDisposedAfterWrite) {
+      newChange(kind, pBufManager, nullptr, 0, inLineQoS,
+                markDisposedAfterWrite);
+}
+
+template <class NetworkDriver>
+const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+    ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
+    bool markDisposedAfterWrite) {
+      newChange(kind, nullptr, data, size, inLineQoS,
+                markDisposedAfterWrite);
 }
 
 template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::progress() {
@@ -300,8 +323,10 @@ bool StatefulWriterT<NetworkDriver>::sendData(const ReaderProxy &reader,
   info.destAddr = locator.getIp4Address();
   info.destPort = (Ip4Port_t)locator.port;
 
+  PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+
   MessageFactory::addSubMessageData(
-      info.buffer, next->data, next->inLineQoS, next->sequenceNumber,
+      info.buffer, pbufChain, next->inLineQoS, next->sequenceNumber,
       m_attributes.endpointGuid.entityId, reader.remoteReaderGuid.entityId);
   m_transport->sendPacket(info);
 
@@ -363,8 +388,8 @@ bool StatefulWriterT<NetworkDriver>::sendDataWRMulticast(
     } else {
       reid = reader.remoteReaderGuid.entityId;
     }
-
-    MessageFactory::addSubMessageData(info.buffer, next->data, next->inLineQoS,
+    PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+    MessageFactory::addSubMessageData(info.buffer, pbufChain, next->inLineQoS,
                                       next->sequenceNumber,
                                       m_attributes.endpointGuid.entityId, reid);
 
