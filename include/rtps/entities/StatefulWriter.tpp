@@ -121,13 +121,6 @@ template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::reset() {
 }
 
 template <class NetworkDriver>
-const CacheChange *newChange(
-    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
-                                       bool markDisposedAfterWrite) {
-                                       
-}
-
-template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
@@ -168,7 +161,7 @@ template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
     bool markDisposedAfterWrite) {
-      newChange(kind, pBufManager, nullptr, 0, inLineQoS,
+      return newChange(kind, pBufManager, nullptr, 0, inLineQoS,
                 markDisposedAfterWrite);
 }
 
@@ -176,7 +169,7 @@ template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
-      newChange(kind, nullptr, data, size, inLineQoS,
+      return newChange(kind, nullptr, data, size, inLineQoS,
                 markDisposedAfterWrite);
 }
 
@@ -375,10 +368,15 @@ bool StatefulWriterT<NetworkDriver>::sendData(const ReaderProxy &reader,
   info.destAddr = locator.getIp4Address();
   info.destPort = (Ip4Port_t)locator.port;
 
-  PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+  const PBufWrapper* pbufChain;
+  if (next->pBufManager != nullptr) {
+    pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+  } else {
+    pbufChain = &next->data;
+  }
 
   MessageFactory::addSubMessageData(
-      info.buffer, pbufChain, next->inLineQoS, next->sequenceNumber,
+      info.buffer, *pbufChain, next->inLineQoS, next->sequenceNumber,
       m_attributes.endpointGuid.entityId, reader.remoteReaderGuid.entityId);
   m_transport->sendPacket(info);
 
@@ -441,8 +439,15 @@ bool StatefulWriterT<NetworkDriver>::sendDataWRMulticast(
     } else {
       reid = reader.remoteReaderGuid.entityId;
     }
-    PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
-    MessageFactory::addSubMessageData(info.buffer, pbufChain, next->inLineQoS,
+    
+    const PBufWrapper* pbufChain;
+    if (next->pBufManager != nullptr) {
+      pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
+    } else {
+      pbufChain = &next->data;
+    }
+
+    MessageFactory::addSubMessageData(info.buffer, *pbufChain, next->inLineQoS,
                                       next->sequenceNumber,
                                       m_attributes.endpointGuid.entityId, reid);
 

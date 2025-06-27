@@ -57,6 +57,7 @@ public:
   virtual bool removeProxy(const Guid_t &guid);
   virtual void removeAllProxiesOfParticipant(const GuidPrefix_t &guidPrefix);
   virtual void reset() = 0;
+  virtual const CacheChange *newChange(ChangeKind_t kind, PBufManager *pBufManager);
   virtual const CacheChange *newChange(ChangeKind_t kind, const uint8_t *data,
                                        DataSize_t size);
 

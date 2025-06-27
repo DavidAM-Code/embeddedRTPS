@@ -128,18 +128,18 @@ const CacheChange *StatelessWriterT<NetworkDriver>::newChange(
 }
 
 template <class NetworkDriver>
-const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+const rtps::CacheChange *StatelessWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
     bool markDisposedAfterWrite) {
-      newChange(kind, pBufManager, nullptr, 0, inLineQoS,
+      return newChange(kind, pBufManager, nullptr, 0, inLineQoS,
                 markDisposedAfterWrite);
 }
 
 template <class NetworkDriver>
-const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
+const rtps::CacheChange *StatelessWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
-      newChange(kind, nullptr, data, size, inLineQoS,
+      return newChange(kind, nullptr, data, size, inLineQoS,
                 markDisposedAfterWrite);
 }
 
@@ -217,8 +217,14 @@ void StatelessWriterT<NetworkDriver>::progress() {
           reid = proxy.remoteReaderGuid.entityId;
         }
 
-        PBufWrapper* pbufChain = next->pBufManager->getData(reader.remoteReaderGuid);
-        MessageFactory::addSubMessageData(info.buffer, pbufChain, false,
+        const PBufWrapper* pbufChain;
+        if (next->pBufManager != nullptr) {
+          pbufChain = next->pBufManager->getData(proxy.remoteReaderGuid);
+        } else {
+          pbufChain = &next->data;
+        }
+
+        MessageFactory::addSubMessageData(info.buffer, *pbufChain, false,
                                           next->sequenceNumber,
                                           m_attributes.endpointGuid.entityId,
                                           reid);

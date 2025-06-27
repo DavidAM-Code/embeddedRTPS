@@ -28,7 +28,7 @@ Author: i11 - Embedded Software, RWTH Aachen University
 #include "lwip/sys.h"
 #include "rtps/communication/PacketInfo.h"
 #include "rtps/communication/UdpDriver.h"
-#include "rtps/config.h"
+#include "rtps/config_stm.h"
 #include "rtps/storages/PBufWrapper.h"
 #include "rtps/storages/ThreadSafeCircularBuffer.h"
 

@@ -43,6 +43,10 @@ public:
             NetworkDriver &driver, bool enfUnicast = false);
 
   void progress() override;
+
+  const rtps::CacheChange *newChange(ChangeKind_t kind, PBufManager *pBufManager,
+    bool inLineQoS = false, bool markDisposedAfterWrite = false) override;
+
   const CacheChange *newChange(ChangeKind_t kind, const uint8_t *data,
                                DataSize_t size, bool inLineQoS = false,
                                bool markDisposedAfterWrite = false) override;
@@ -57,6 +61,10 @@ private:
   NetworkDriver *m_transport;
 
   SimpleHistoryCache<Config::HISTORY_SIZE_STATELESS> m_history;
+
+  const CacheChange *newChange(
+    rtps::ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size,
+    bool inLineQoS, bool markDisposedAfterWrite);
 };
 
 using StatelessWriter = StatelessWriterT<UdpDriver>;

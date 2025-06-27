@@ -52,7 +52,7 @@ public:
     CacheChange change;
     change.kind = ChangeKind_t::ALIVE;
     change.inLineQoS = inLineQoS;
-    change.diposeAfterWrite = disposeAfterWrite;
+    change.disposeAfterWrite = disposeAfterWrite;
     if (data != nullptr || size != 0) {
       change.data.reserve(size);
       change.data.append(data, size);
@@ -72,7 +72,7 @@ public:
     CacheChange change;
     change.kind = ChangeKind_t::ALIVE;
     change.inLineQoS = inLineQoS;
-    change.diposeAfterWrite = disposeAfterWrite;
+    change.disposeAfterWrite = disposeAfterWrite;
     if (data != nullptr || size != 0) {
       change.data.reserve(size);
       change.data.append(data, size);

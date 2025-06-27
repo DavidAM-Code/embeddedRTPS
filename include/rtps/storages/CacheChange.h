@@ -26,7 +26,7 @@ Author: i11 - Embedded Software, RWTH Aachen University
 #define PROJECT_CACHECHANGE_H
 
 #include "rtps/common/types.h"
-#include "rtps/storages/PBufWrapper.h"
+#include "rtps/storages/PBufManager.h"
 
 namespace rtps {
 struct CacheChange {
