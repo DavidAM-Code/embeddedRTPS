@@ -59,7 +59,7 @@ public:
     }
     change.sequenceNumber = ++m_lastUsedSequenceNumber;
 
-    CacheChange *place = &m_buffer[m_hsead];
+    CacheChange *place = &m_buffer[m_head];
     incrementHead();
 
     *place = std::move(change);

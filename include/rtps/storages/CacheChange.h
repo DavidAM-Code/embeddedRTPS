@@ -32,9 +32,10 @@ namespace rtps {
 struct CacheChange {
   ChangeKind_t kind = ChangeKind_t::INVALID;
   bool inLineQoS = false;
-  bool diposeAfterWrite = false;
+  bool disposeAfterWrite = false;
   SequenceNumber_t sequenceNumber = SEQUENCENUMBER_UNKNOWN;
   PBufWrapper data{};
+
 
   CacheChange() = default;
   CacheChange(ChangeKind_t kind, SequenceNumber_t sequenceNumber)
@@ -44,7 +45,8 @@ struct CacheChange {
     kind = ChangeKind_t::INVALID;
     sequenceNumber = SEQUENCENUMBER_UNKNOWN;
     inLineQoS = false;
-    diposeAfterWrite = false;
+    disposeAfterWrite = false;
+    delete
   }
 };
 } // namespace rtps
