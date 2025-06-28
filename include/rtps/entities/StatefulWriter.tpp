@@ -119,8 +119,15 @@ template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::reset() {
 }
 
 template <class NetworkDriver>
+const CacheChange *newChange(
+    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
+                                       bool markDisposedAfterWrite) {
+                                       
+}
+
+template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
-    ChangeKind_t kind, const uint8_t *data, DataSize_t size, bool inLineQoS,
+    ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
   INIT_GUARD()
   if (isIrrelevant(kind)) {
@@ -143,7 +150,7 @@ const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
   }
 
   auto *result =
-      m_history.addChange(data, size, inLineQoS, markDisposedAfterWrite);
+      m_history.addChange(pBufManager, data, size, inLineQoS, markDisposedAfterWrite);
   if (mp_threadPool != nullptr) {
     mp_threadPool->addWorkload(this);
   }

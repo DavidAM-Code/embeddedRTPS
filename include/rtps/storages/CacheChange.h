@@ -35,6 +35,7 @@ struct CacheChange {
   bool disposeAfterWrite = false;
   SequenceNumber_t sequenceNumber = SEQUENCENUMBER_UNKNOWN;
   PBufWrapper data{};
+  PBufManager *pBufManager;
 
 
   CacheChange() = default;
@@ -46,7 +47,7 @@ struct CacheChange {
     sequenceNumber = SEQUENCENUMBER_UNKNOWN;
     inLineQoS = false;
     disposeAfterWrite = false;
-    delete
+    delete pBufManager;
   }
 };
 } // namespace rtps

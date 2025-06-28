@@ -98,7 +98,7 @@ void StatelessWriterT<NetworkDriver>::reset() {
 
 template <typename NetworkDriver>
 const CacheChange *StatelessWriterT<NetworkDriver>::newChange(
-    rtps::ChangeKind_t kind, const uint8_t *data, DataSize_t size,
+    rtps::ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size,
     bool inLineQoS, bool markDisposedAfterWrite) {
   INIT_GUARD();
   if (isIrrelevant(kind)) {
@@ -117,7 +117,7 @@ const CacheChange *StatelessWriterT<NetworkDriver>::newChange(
     }
   }
 
-  auto *result = m_history.addChange(data, size);
+  auto *result = m_history.addChange(pBufManager, data, size);
   if (mp_threadPool != nullptr) {
     mp_threadPool->addWorkload(this);
   }
