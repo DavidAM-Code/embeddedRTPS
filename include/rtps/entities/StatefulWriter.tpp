@@ -119,13 +119,6 @@ template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::reset() {
 }
 
 template <class NetworkDriver>
-const CacheChange *newChange(
-    ChangeKind_t kind, PBufManager *pBufManager, bool inLineQoS,
-                                       bool markDisposedAfterWrite) {
-                                       
-}
-
-template <class NetworkDriver>
 const rtps::CacheChange *StatefulWriterT<NetworkDriver>::newChange(
     ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size, bool inLineQoS,
     bool markDisposedAfterWrite) {
@@ -197,7 +190,7 @@ template <class NetworkDriver> void StatefulWriterT<NetworkDriver>::progress() {
      * -> onAckNack will send Gap Messages to skip deleted local endpoints
      * during SEDP
      */
-    if (next->diposeAfterWrite) {
+    if (next->disposeAfterWrite) {
       m_history.dropChange(next->sequenceNumber);
     }
   } else {

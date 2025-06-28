@@ -51,7 +51,7 @@ public:
     CacheChange change;
     change.kind = ChangeKind_t::ALIVE;
     change.inLineQoS = inLineQoS;
-    change.diposeAfterWrite = disposeAfterWrite;
+    change.disposeAfterWrite = disposeAfterWrite;
     change.data.reserve(size);
     change.data.append(data, size);
     change.sequenceNumber = ++m_lastUsedSequenceNumber;
