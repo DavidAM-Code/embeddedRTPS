@@ -45,6 +45,9 @@ public:
                                DataSize_t size, bool inLineQoS = false,
                                bool markDisposedAfterWrite = false) override;
 
+  const rtps::CacheChange *newChange(ChangeKind_t kind, PBufManager *pBufManager,
+    bool inLineQoS = false, bool markDisposedAfterWrite = false) override;
+
   bool removeFromHistory(const SequenceNumber_t &s);
   void setAllChangesToUnsent() override;
   void onNewAckNack(const SubmessageAckNack &msg,
@@ -65,6 +68,11 @@ private:
 
   bool sendData(const ReaderProxy &reader, const CacheChange *next);
   bool sendDataWRMulticast(const ReaderProxy &reader, const CacheChange *next);
+
+  const rtps::CacheChange *newChange(
+    ChangeKind_t kind, PBufManager *pBufManager, const uint8_t *data, DataSize_t size, bool inLineQoS,
+    bool markDisposedAfterWrite);
+
   static void hbFunctionJumppad(void *thisPointer);
   void sendHeartBeatLoop();
   void sendHeartBeat();

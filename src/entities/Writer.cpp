@@ -52,6 +52,11 @@ void rtps::Writer::resetSendOptions() {
 }
 
 const rtps::CacheChange *rtps::Writer::newChange(ChangeKind_t kind,
+                                                 PBufManager *pBufManager) {
+  return newChange(kind, pBufManager, false, false);
+}
+
+const rtps::CacheChange *rtps::Writer::newChange(ChangeKind_t kind,
                                                  const uint8_t *data,
                                                  DataSize_t size) {
   return newChange(kind, data, size, false, false);

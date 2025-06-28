@@ -46,7 +46,7 @@ public:
     return it == m_tail;
   }
 
-  const CacheChange *addChange(const uint8_t *data, DataSize_t size,
+  const CacheChange *addChange(PBufManager *pBufManager, const uint8_t *data, DataSize_t size,
                                bool inLineQoS, bool disposeAfterWrite) {
     CacheChange change;
     change.kind = ChangeKind_t::ALIVE;
@@ -55,6 +55,7 @@ public:
     change.data.reserve(size);
     change.data.append(data, size);
     change.sequenceNumber = ++m_lastUsedSequenceNumber;
+    change.pBufManager = pBufManager;
 
     CacheChange *place = &m_buffer[m_head];
     incrementHead();
@@ -63,8 +64,8 @@ public:
     return place;
   }
 
-  const CacheChange *addChange(const uint8_t *data, DataSize_t size) {
-    return addChange(data, size, 0, false);
+  const CacheChange *addChange(PBufManager *pBufManager, const uint8_t *data, DataSize_t size) {
+    return addChange(pBufManager, data, size, 0, false);
   }
 
   void removeUntilIncl(SequenceNumber_t sn) {

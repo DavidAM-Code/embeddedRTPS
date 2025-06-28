@@ -45,8 +45,8 @@ struct ReaderProxy {
       : remoteReaderGuid({GUIDPREFIX_UNKNOWN, ENTITYID_UNKNOWN}),
         finalFlag(false){};
   ReaderProxy(const Guid_t &guid, const LocatorIPv4 &loc, bool reliable)
-      : remoteReaderGuid(guid), remoteLocator(loc),
-        is_reliable(reliable), ackNackCount{0}, finalFlag(false){};
+      : remoteReaderGuid(guid), is_reliable(reliable), remoteLocator(loc),
+        ackNackCount{0}, finalFlag(false){};
   ReaderProxy(const Guid_t &guid, const LocatorIPv4 &loc,
               const LocatorIPv4 &mcastloc, bool reliable)
       : remoteReaderGuid(guid), remoteLocator(loc), is_reliable(reliable),
