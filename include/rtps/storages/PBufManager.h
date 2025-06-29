@@ -13,7 +13,7 @@ namespace rtps {
     public:
         virtual ~PBufManager() = default;
 
-        virtual rtps::PBufWrapper* getData(Guid_t) = 0;
+        virtual rtps::PBufWrapper getData(Guid_t) = 0;
 
         virtual bool isInRetransmitMode() const = 0;
 

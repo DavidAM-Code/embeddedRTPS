@@ -216,14 +216,14 @@ void StatelessWriterT<NetworkDriver>::progress() {
           reid = proxy.remoteReaderGuid.entityId;
         }
 
-        const PBufWrapper* pbufChain;
+        PBufWrapper pbufChain;
         if (next->pBufManager != nullptr) {
           pbufChain = next->pBufManager->getData(proxy.remoteReaderGuid);
         } else {
-          pbufChain = &next->data;
+          pbufChain = next->data;
         }
 
-        MessageFactory::addSubMessageData(info.buffer, *pbufChain, false,
+        MessageFactory::addSubMessageData(info.buffer, pbufChain, false,
                                           next->sequenceNumber,
                                           m_attributes.endpointGuid.entityId,
                                           reid); // TODO
