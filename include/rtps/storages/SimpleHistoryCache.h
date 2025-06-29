@@ -77,7 +77,11 @@ public:
       change.data.reserve(size);
       change.data.append(data, size);
     }
-    change.pBufManager = pBufManager;
+    if (pBufManager != nullptr) {
+    	change.pBufManager = pBufManager;
+    } else {
+    	change.pBufManager = nullptr;
+    }
     change.sequenceNumber = ++m_lastUsedSequenceNumber;
 
     CacheChange *place = &m_buffer[m_head];
